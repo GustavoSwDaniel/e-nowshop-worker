@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: check-orders-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: check-orders
+  template:
+    metadata:
+      labels:
+        app: check-orders
+    spec:
+      containers:
+        - name: check-orders
+          image: gcr.io/enowhop/enowshop-worker:6
+          args: ["run_check_status_order"]
+          env:
+            - name: URL_GET_ORDERS
+              valueFrom:
+                secretKeyRef:
+                  name: workers-secrets
+                  key: URL_GET_ORDERS
+            - name: BROKER_SERVER
+              valueFrom:
+                secretKeyRef:
+                  name: workers-secrets
+                  key: BROKER_SERVER
+            - name: BROKER_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: workers-secrets
+                  key: BROKER_USERNAME
+            - name: BROKER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: workers-secrets
+                  key: BROKER_PASSWORD
+            - name: TOPIC_CHECK_ORDER
+              valueFrom:
+                secretKeyRef:
+                  name: workers-secrets
+                  key: TOPIC_CHECK_ORDER
+            - name: INTERVAL
+              valueFrom:
+                secretKeyRef:
+                  name: workers-secrets
+                  key: INTERVAL
+            
+            

@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: queue-orders-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: queue-orders
+  template:
+    metadata:
+      labels:
+        app: queue-orders
+    spec:
+      containers:
+        - name: queue-orders
+          image: gcr.io/enowhop/enowshop-worker:6
+          args: ["run_queue_order"]
+          env:
+            - name: URL_GET_ORDERS
+              valueFrom:
+                secretKeyRef:
+                  name: workers-secrets
+                  key: URL_GET_ORDERS
+            - name: BROKER_SERVER
+              valueFrom:
+                secretKeyRef:
+                  name: workers-secrets
+                  key: BROKER_SERVER
+            - name: BROKER_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: workers-secrets
+                  key: BROKER_USERNAME
+            - name: BROKER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: workers-secrets
+                  key: BROKER_PASSWORD
+            - name: TOPIC_CHECK_ORDER
+              valueFrom:
+                secretKeyRef:
+                  name: workers-secrets
+                  key: TOPIC_CHECK_ORDER
+            - name: INTERVAL
+              valueFrom:
+                secretKeyRef:
+                  name: workers-secrets
+                  key: INTERVAL
+            
